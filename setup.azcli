@@ -1,0 +1,17 @@
+#!/bin/sh
+# Step 1: Deploy the VNET
+
+az deployment sub create \
+    --name "vnet_subnet_test" \
+    --location "westeurope" \
+    --template-file ./vnet/main.bicep \
+    --confirm-with-what-if
+
+# Step 2: Add a Subnet to the JSON
+
+# Step 3: Deploy just this new subnet (it takes the last from the JSON)
+az deployment group create \
+    -g "rg-vnet-test" \
+    --name "add_subnet_test" \
+    --template-file ./subnet/main.bicep \
+    --confirm-with-what-if
