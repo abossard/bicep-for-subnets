@@ -17,6 +17,6 @@ module stg './subnet.bicep' = [for subnetIndex in deployIndexes: {
   name: 'subnetDeployment-${subnetIndex}'
   params: {
     vnetName: vnetName
-    subnets: subnetMap.outputs.subnets[subnetIndex]
+    subnets: [subnetMap.outputs.subnets[subnetIndex]]
   }
 }]
