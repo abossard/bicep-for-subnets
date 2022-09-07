@@ -2,9 +2,8 @@ param vnetName string = uniqueString(resourceGroup().id)
 
 param subnets object = loadJsonContent('../subnets.json')
 param location string = resourceGroup().location
-param subnetsToDeploy array = [
-  'workstation-46'
-]
+param deployIndexes array = [length(items(subnets)) -1]
+
 module subnetMap '../subnet/subnet-map.bicep' = {
   name: 'subnetMap'
   params: {
@@ -14,10 +13,10 @@ module subnetMap '../subnet/subnet-map.bicep' = {
 }
 
 
-module stg './subnet.bicep' = [for subnet in subnetsToDeploy: {
-  name: 'subnetDeployment-${subnet}'
+module stg './subnet.bicep' = [for subnetIndex in deployIndexes: {
+  name: 'subnetDeployment-${subnetIndex}'
   params: {
     vnetName: vnetName
-    subnets: [subnetMap.outputs.subnets[subnet]]
+    subnets: subnetMap.outputs.subnets[subnetIndex]
   }
 }]
