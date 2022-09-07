@@ -1,64 +1,44 @@
-@description('Array containing subnets to create within the Virtual Network. For properties format refer to https://docs.microsoft.com/en-us/azure/templates/microsoft.network/virtualnetworks/subnets?tabs=bicep#subnetpropertiesformat')
-param subnets object =  {
-    subnet1:  {
-      addressPrefix: '10.0.1.0/24'
-      privateEndpointNetworkPolicies: 'disabled'
-      privateLinkServiceNetworkPolicies: 'disabled'
-    }
-}
-param location string = resourceGroup().location
+param name string
+param subnet object
+param nsgId string
+param vnetName string
+param deploySubnet bool = false
 
-var egressBlockRules = loadJsonContent('../nsg-egress-block-rules.json')
-module nsgMap 'nsg-map.bicep' = [for (subnet, index) in items(subnets): {
-  name: '${subnet.key}-nsg-map'
-  params: {
-    additionalRules: [for (targetSubnetName, innerIndex) in subnet.value.restrictEgressTo: {
-      name: '${targetSubnetName}-allow'
-      properties: {
-        access: 'Allow'
-        description: 'Allow ${subnet.key} subnet to access ${targetSubnetName} subnet'
-        destinationAddressPrefix: subnets[targetSubnetName].addressPrefix
-        destinationPortRange: '*'
-        direction: 'Outbound'
-        priority: innerIndex + 100
-        protocol: '*'
-        sourceAddressPrefix: '*'
-        sourcePortRange: '*'
-      }
-    }]
-    defaultRules: length(subnet.value.restrictEgressTo) > 0 ? egressBlockRules : []
-  }
-}]
-
-resource nsgs 'Microsoft.Network/networkSecurityGroups@2022-01-01' = [for (subnet, index) in items(subnets): {
-  name: '${subnet.key}-nsg'
-  location: location
-  properties: nsgMap[index].outputs.nsgProperties
-}]
-
-output subnets array = [for (subnet, index) in items(subnets): {
-  name: subnet.key
+var subnetData = {
+  name: name
   properties: {
-    addressPrefix: subnet.value.addressPrefix
-    delegations: contains(subnet.value, 'delegation') ? [
+    addressPrefix: subnet.addressPrefix
+    delegations: contains(subnet, 'delegation') ? [
       {
-        name: '${subnet.key}-delegation'
+        name: '${name}-delegation'
         properties: {
-          serviceName: subnet.value.delegation
+          serviceName: subnet.delegation
         }
       }
     ] : []
-    natGateway: contains(subnet.value, 'natGatewayId') ? {
-      id: subnet.value.natGatewayId
+    natGateway: contains(subnet, 'natGatewayId') ? {
+      id: subnet.natGatewayId
     } : null
-    networkSecurityGroup: contains(subnet.value, 'egressRules') &&  contains(subnet.value.egressRules, 'enabled') && subnet.value.egressRules.enabled ? {
-      id: nsgs[index].id
+    networkSecurityGroup: !empty(nsgId) ? {
+      id: nsgId
     } : null
-    routeTable: contains(subnet.value, 'udrId') ? {
-      id: subnet.value.udrId
+    routeTable: contains(subnet, 'udrId') ? {
+      id: subnet.udrId
     } : null
-    privateEndpointNetworkPolicies: contains(subnet.value, 'privateEndpointNetworkPolicies') ? subnet.value.privateEndpointNetworkPolicies : null
-    privateLinkServiceNetworkPolicies: contains(subnet.value, 'privateLinkServiceNetworkPolicies') ? subnet.value.privateLinkServiceNetworkPolicies : null
-    serviceEndpoints: contains(subnet.value, 'serviceEndpoints') ? subnet.value.serviceEndpoints : null
+    privateEndpointNetworkPolicies: contains(subnet, 'privateEndpointNetworkPolicies') ? subnet.privateEndpointNetworkPolicies : null
+    privateLinkServiceNetworkPolicies: contains(subnet, 'privateLinkServiceNetworkPolicies') ? subnet.privateLinkServiceNetworkPolicies : null
+    serviceEndpoints: contains(subnet, 'serviceEndpoints') ? subnet.serviceEndpoints : null
   }
-}]
+}
+
+resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
+  name: vnetName
+}
+
+resource subnetResource 'Microsoft.Network/virtualNetworks/subnets@2021-08-01' = if (deploySubnet) {
+  name: subnetData.name
+  parent: vnet
+  properties: subnetData.properties
+}
+
+output subnet object = subnetData

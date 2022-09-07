@@ -23,6 +23,10 @@
     "addressPrefix": "10.0.6.0/24",
     "restrictEgressTo":[]
   },
+  "trial-7": {
+    "addressPrefix": "10.0.7.0/24",
+    "restrictEgressTo":[]
+  },
   "workstation-12": {
     "addressPrefix": "10.0.127.0/24",
     "restrictEgressTo":  [
@@ -42,6 +46,22 @@
     "addressPrefix": "10.0.129.0/24",
     "restrictEgressTo":  [
         "trial-4",
+        "trial-6"
+    ]
+  },
+  "workstation-35": {
+    "addressPrefix": "10.0.130.0/24",
+    "restrictEgressTo":  [
+        "trial-3",
+        "trial-5"
+    ]
+  },
+  "workstation-3456": {
+    "addressPrefix": "10.0.131.0/24",
+    "restrictEgressTo":  [
+        "trial-3",
+        "trial-4",
+        "trial-5",
         "trial-6"
     ]
   }

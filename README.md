@@ -24,3 +24,12 @@ Play through the scenario:
             --confirm-with-what-if
     ```
 1. Now you can either add more or also at any time execute step 1 again.
+2. You can also deploy certain subnets imperatively, here it deploys subnet `trial-7`
+     ```bash
+        az deployment group create \
+            -g "rg-vnet-test" \
+            --name "add_subnet_test" \
+            --template-file ./subnet/main.bicep \
+            --parameters deploySubnetNames="['trial-7']" \
+            --confirm-with-what-if
+    ```
