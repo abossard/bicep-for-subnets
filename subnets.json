@@ -1,26 +1,48 @@
-[
-  {
-    "name": "trial-1",
+{
+  "trial-1": {
     "addressPrefix": "10.0.1.0/24",
-    "privateEndpointNetworkPolicies": "disabled",
-    "privateLinkServiceNetworkPolicies": "disabled"
+    "restrictEgressTo":[]
   },
-  {
-    "name": "trial-2",
+  "trial-2": {
     "addressPrefix": "10.0.2.0/24",
-    "privateEndpointNetworkPolicies": "disabled",
-    "privateLinkServiceNetworkPolicies": "disabled"
+    "restrictEgressTo":[]
   },
-  {
-    "name": "trial-3",
+  "trial-3": {
     "addressPrefix": "10.0.3.0/24",
-    "privateEndpointNetworkPolicies": "disabled",
-    "privateLinkServiceNetworkPolicies": "disabled"
+    "restrictEgressTo":[]
   },
-  {
-    "name": "trial-4",
+  "trial-4": {
     "addressPrefix": "10.0.4.0/24",
-    "privateEndpointNetworkPolicies": "disabled",
-    "privateLinkServiceNetworkPolicies": "disabled"
+    "restrictEgressTo":[]
+  },
+  "trial-5": {
+    "addressPrefix": "10.0.5.0/24",
+    "restrictEgressTo":[]
+  },
+  "trial-6": {
+    "addressPrefix": "10.0.6.0/24",
+    "restrictEgressTo":[]
+  },
+  "workstation-12": {
+    "addressPrefix": "10.0.127.0/24",
+    "restrictEgressTo":  [
+        "trial-1",
+        "trial-2"
+    ]
+  },
+  "workstation-123": {
+    "addressPrefix": "10.0.128.0/24",
+    "restrictEgressTo":  [
+        "trial-1",
+        "trial-2",
+        "trial-3"
+    ]
+  },
+  "workstation-46": {
+    "addressPrefix": "10.0.128.0/24",
+    "restrictEgressTo":  [
+        "trial-4",
+        "trial-6"
+    ]
   }
-]
+}

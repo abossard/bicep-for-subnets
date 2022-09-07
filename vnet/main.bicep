@@ -3,8 +3,7 @@ param tags object = {
   Environment: 'Production'
   Application: 'PowerBIEmbedded'
 }
-
-var subnets = loadJsonContent('../subnets.json')
+param subnets object = loadJsonContent('../subnets.json')
 
 targetScope = 'subscription'
 
@@ -19,6 +18,7 @@ module subnetMap '../subnet/subnet-map.bicep' = {
   scope: rg
   params: {
     subnets: subnets
+    location: location
   }
 }
 
