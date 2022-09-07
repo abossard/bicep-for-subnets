@@ -39,7 +39,7 @@
     ]
   },
   "workstation-46": {
-    "addressPrefix": "10.0.128.0/24",
+    "addressPrefix": "10.0.129.0/24",
     "restrictEgressTo":  [
         "trial-4",
         "trial-6"
