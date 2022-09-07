@@ -1,3 +1,7 @@
+//
+// This module's purpose is to map the subnet item of the JSON into an ARM Subnet Properties
+// so check out what kind of properties are already supported and expand and change if required
+//
 param name string
 param subnet object
 param nsgId string

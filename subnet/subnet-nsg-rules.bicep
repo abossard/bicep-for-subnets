@@ -1,3 +1,9 @@
+//
+// Welcome to the juicy part. 
+// This file is is creating the NGS's and adding them to the subnets
+//
+//
+
 @description('Array containing subnets to create within the Virtual Network. For properties format refer to https://docs.microsoft.com/en-us/azure/templates/microsoft.network/virtualnetworks/subnets?tabs=bicep#subnetpropertiesformat')
 param subnets object
 
@@ -11,6 +17,10 @@ param deploySubet bool = false
 param vnetName string
 param egressBlockRules array = loadJsonContent('../nsg-egress-block-rules.json')
 
+// this is how you can do a nested loop with bicep:
+// - it loops over the subnets that are part of the deployment
+// - for each subnet it loops over the egress block rules and then, looks up the addressPrefix from the 
+//   target subnet
 module nsgMap 'nsg-map.bicep' = [for (subnet, index) in items(subnets): if (empty(deploySubnetNames) || contains(deploySubnetNames, subnet.key)) {
   name: '${subnet.key}-nsg-map'
   params: {
@@ -32,6 +42,7 @@ module nsgMap 'nsg-map.bicep' = [for (subnet, index) in items(subnets): if (empt
   }
 }]
 
+// Since we need the NSG id, there's no other way than to actually create it.
 resource nsgs 'Microsoft.Network/networkSecurityGroups@2022-01-01' = [for (subnet, index) in items(subnets): if (empty(deploySubnetNames) || contains(deploySubnetNames, subnet.key)) {
   name: '${subnet.key}-nsg'
   location: location
@@ -39,6 +50,9 @@ resource nsgs 'Microsoft.Network/networkSecurityGroups@2022-01-01' = [for (subne
   properties: nsgMap[index].outputs.nsgProperties
 }]
 
+// loop with conditionals can essentially only be used in resources and modules
+// also the module output is skewed due to the conditional, so the module will always return
+// and yeah, the order of properties in javascript is not garanteed, so yeah
 module subnetMap './subnet-map.bicep' = [for (subnet, index) in items(subnets): if (empty(deploySubnetNames) || contains(deploySubnetNames, subnet.key)) {
   name: '${subnet.key}-subnetMap'
   params: {

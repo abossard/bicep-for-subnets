@@ -11,25 +11,22 @@ Play through the scenario:
         az deployment sub create \
             --name "vnet_subnet_test" \
             --location "westeurope" \
-            --template-file ./vnet/main.bicep \
-            --confirm-with-what-if
+            --template-file ./vnet/main.bicep 
     ```
-1. Add a subnet to the end of the subnets.json
-1. Deploy this additional subnet imperatively
+2. Add a subnet to the end of the subnets.json
+3. Deploy this additional subnet imperatively
     ```bash
         az deployment group create \
             -g "rg-vnet-test" \
             --name "add_subnet_test" \
-            --template-file ./subnet/main.bicep \
-            --confirm-with-what-if
+            --template-file ./subnet/main.bicep 
     ```
-1. Now you can either add more or also at any time execute step 1 again.
-2. You can also deploy certain subnets imperatively, here it deploys subnet `trial-7`
+4. Now you can either add more or also at any time execute step 1 again.
+5. You can also deploy certain subnets imperatively, here it deploys subnet `trial-7`
      ```bash
         az deployment group create \
             -g "rg-vnet-test" \
             --name "add_subnet_test" \
             --template-file ./subnet/main.bicep \
-            --parameters deploySubnetNames="['trial-7']" \
-            --confirm-with-what-if
+            --parameters deploySubnetNames="['trial-7']" 
     ```

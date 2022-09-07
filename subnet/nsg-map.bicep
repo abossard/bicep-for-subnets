@@ -1,3 +1,6 @@
+//
+// This module is just here because nested loops require a resource or module.
+//
 @description('Default rules')
 param defaultRules array
 
