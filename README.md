@@ -19,7 +19,8 @@ Play through the scenario:
         az deployment group create \
             -g "rg-vnet-test" \
             --name "add_subnet_test" \
-            --template-file ./subnet/main.bicep 
+            --template-file ./subnet/main.bicep \
+            --parameters deploySubnetNames="['trial-7']"
     ```
 4. Now you can either add more or also at any time execute step 1 again.
 5. You can also deploy certain subnets imperatively, here it deploys subnet `trial-7`
@@ -30,3 +31,8 @@ Play through the scenario:
             --template-file ./subnet/main.bicep \
             --parameters deploySubnetNames="['trial-7']" 
     ```
+
+![Overview](overview.drawio.svg)
+
+## Challanges
+- ARM/Bicep only supports nested loops and conditional loops on Modules and Resources, not in any other places
